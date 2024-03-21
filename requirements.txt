@@ -1,0 +1,7 @@
+levenshtein
+pydantic
+pytokenizations
+scikit-learn
+fastdtw
+ukkonen
+numba
