@@ -71,10 +71,7 @@ Actually, there are 5 algorithms implemented in `merge-tokenizers`:
 
 **Greedy**: matches each token in a text with the tokens in a surrounding window of another text, according to the following eq if `word_ids` are passed:
 $$\textrm{match}(t_i) = \underset{{i-k\leq j\leq i+k}}{\textrm{min}}\ \textrm{dist}(t_i, t_j) * s_{ij}$$
-$$s_{ij}=\begin{Bmatrix}
-1 & \textrm{word-id}(t_i) = \textrm{word-id}(t_j)\\
-\infty & \textrm{otherwise} \\
-\end{Bmatrix}$$
+$$s_{ij} = 1\ \textrm{if}\ \textrm{word-id}(t_i)=\textrm{word-id}(t_j),\ \infty\ otherwise$$
 
 or the following eq if `word_ids` are not passed:
 
