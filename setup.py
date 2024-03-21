@@ -34,7 +34,6 @@ extensions = [
         ["merge_tokenizers/aligners/dtw_c/dtw.c"],
         language="c",
         include_dirs=["merge_tokenizers/aligners/dtw_c"],
-        libraries=["g++"],
     ),
 ]
 
