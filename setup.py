@@ -30,8 +30,8 @@ EXTRAS_REQUIRES: Dict[str, List[str]] = {
 
 extensions = [
     Extension(
-        "merge_tokenizers.aligners.dtw_c.dtw",
-        ["merge_tokenizers/aligners/dtw_c/dtw.c"],
+        name="merge_tokenizers.aligners.dtw_c.dtw",
+        sources=["merge_tokenizers/aligners/dtw_c/dtw.c"],
         language="c",
         include_dirs=["merge_tokenizers/aligners/dtw_c"],
     ),
@@ -51,6 +51,7 @@ setup(
     extras_require=EXTRAS_REQUIRES,
     include_package_data=True,
     ext_modules=extensions,
+    zip_safe=False,
     python_requires=">=3.8.0",
     classifiers=[
         "Development Status :: 4 - Beta",
