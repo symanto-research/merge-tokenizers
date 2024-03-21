@@ -32,7 +32,9 @@ extensions = [
     Extension(
         "merge_tokenizers.aligners.dtw_c.dtw",
         ["merge_tokenizers/aligners/dtw_c/dtw.c"],
+        language="c",
         include_dirs=["merge_tokenizers/aligners/dtw_c"],
+        libraries=["g++"],
     ),
 ]
 
@@ -51,5 +53,18 @@ setup(
     include_package_data=True,
     ext_modules=extensions,
     python_requires=">=3.8.0",
-    zip_safe=False,
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "License :: Other/Proprietary License",
+        "Programming Language :: Python :: 3 :: Only",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX",
+    ],
+    license_files=[
+        "LICENSE",
+    ],
 )
