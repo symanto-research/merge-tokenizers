@@ -41,6 +41,8 @@ setup(
     version=VERSION["VERSION"],
     name="merge-tokenizers",
     description="Package to merge tokens from different tokenizers.",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     author="Symanto Research GmbH",
     author_email="jose.gonzalez@symanto.com",
     packages=find_packages(),
