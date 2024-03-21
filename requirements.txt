@@ -1,6 +1,6 @@
 levenshtein
 pydantic
-pytokenizations
+spacy-alignments
 scikit-learn
 fastdtw
 ukkonen

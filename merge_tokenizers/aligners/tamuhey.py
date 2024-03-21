@@ -1,4 +1,4 @@
-from tokenizations import get_alignments
+import spacy_alignments as tokenizations
 
 from ..types import Alignment, PositionAlignment, TokenAlignment, TokenizedPair
 from .base import Aligner
@@ -16,7 +16,7 @@ class TamuheyAligner(Aligner):
         Aligns the tokens from two different tokenizers, using
         the Tamuhey's algorithm: https://github.com/explosion/tokenizations
         """
-        alignments, _ = get_alignments(
+        alignments, _ = tokenizations.get_alignments(
             tokenized_pair.preprocessed_tokens_a,
             tokenized_pair.preprocessed_tokens_b,
         )
