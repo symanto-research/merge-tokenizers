@@ -1,7 +1,0 @@
-levenshtein
-pydantic
-spacy-alignments
-scikit-learn
-fastdtw
-ukkonen
-numba
