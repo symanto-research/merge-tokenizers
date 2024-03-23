@@ -26,11 +26,11 @@ def get_spans(tokens: List[str], text: str) -> List[Tuple[int, int]]:
             if token[i] == text[j + matches]:
                 if start_pos is None:
                     start_pos = matches + j
-                end_pos = matches + j
+                end_pos = matches + j + 1
                 matches += 1
 
         if end_pos is not None:
-            j = end_pos + 1
+            j = end_pos
 
         if start_pos is not None and end_pos is not None:
             spans.append((start_pos, end_pos))
@@ -39,6 +39,9 @@ def get_spans(tokens: List[str], text: str) -> List[Tuple[int, int]]:
         else:
             spans.append((-1, -1))
 
+    # Add missing last span in case of </s>
+    while len(spans) < len(tokens):
+        spans.append((-1, -1))
     return spans
 
 
@@ -115,6 +118,8 @@ class PythonGreedyCoverageAligner(Aligner):
         will result in [(0, [0]), (1, [1, 2, 3]), (2, [4, 5, 6])]
         """
         text = tokenized_pair.text.lower().replace(" ", "")
+
+        # Get spans and align
         spans_a = get_spans(tokenized_pair.preprocessed_tokens_a, text)
         spans_b = get_spans(tokenized_pair.preprocessed_tokens_b, text)
         alignments = merge_spans(spans_a, spans_b)
