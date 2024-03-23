@@ -63,7 +63,7 @@ $ pip install -e .
 # 🎨 Current algorithms
 Actually, there are 6 algorithms implemented in `merge-tokenizers`:
 
-**Dynamic Time Warping** (DTW): a dynamic programming algorithm to compute the optimal ($\mathcal{O}(N^2)$) alignment between two signals that may vary in speed. DTW is applied to two texts, considering text distances between the tokens of each text. `merge-tokenizers` provides a C and a Python (numba jit) implementation of DTW.
+**Dynamic Time Warping** (DTW): a dynamic programming algorithm to compute the optimal, $\mathcal{O}(N^2)$, alignment between two signals that may vary in speed. DTW is applied to two texts, considering text distances between the tokens of each text. `merge-tokenizers` provides a C and a Python (numba jit) implementation of DTW.
 
 **FastDTW**: applies an approximate DTW algorithm that provides optimal or near-optimal alignments with an $\mathcal{O}(N)$ time and memory complexity, using a Bag of Character representation of each token and cosine/euclidean distance.
 
