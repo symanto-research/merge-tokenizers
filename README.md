@@ -43,7 +43,9 @@ As an example, look how the text *"This is how preprocesssing wooorks"* is token
 
 and how one alignment between them can look:
 
-**alignment**: [('[s]', ['[CLS]']), ('this', ['this']), ('Ġis', ['is']), ('Ġhow', ['how']), ('Ġpre', ['prep']), ('process', ['##ro', '##ces']), ('sing', ['##ssing']), ('Ġwoo', ['woo']), ('orks', ['##or', '##ks']), ('[s]', ['[SEP]'])]
+**alignment (tokens)**: [('[s]', ['[CLS]']), ('this', ['this']), ('Ġis', ['is']), ('Ġhow', ['how']), ('Ġpre', ['prep']), ('process', ['##ro', '##ces']), ('sing', ['##ssing']), ('Ġwoo', ['woo']), ('orks', ['##or', '##ks']), ('[s]', ['[SEP]'])]
+
+**alignment (positions)**: [(0, [0]), (1, [1]), (2, [2]), (3, [3]), (4, [4]), (5, [5, 6]), (6, [7]), (7, [8]), (8, [9, 10]), (9, [11])]
 
 # 🔧 Installation
 Requirement: python >= 3.8
@@ -103,7 +105,7 @@ The following table categorizes each approach according to these factors.
 
 To delve more on the speed factor, the following plot depicts the speed (seconds in logarithmic scale) that each aligner takes to align one pair of tokenizations, with different token lengths (6 examples averaged on 100 runs).
 
-![benchmark](assets/benchmark.png)
+![benchmark](https://github.com/symanto-research/merge-tokenizers/blob/main/assets/benchmark.png?raw=true)
 
 You can also look the results of the benchmark in [assets/benchmark.md](assets/benchmark.md) and run it as `python scripts/benchmark.py` after intalling `merge-tokenizers`.
 
