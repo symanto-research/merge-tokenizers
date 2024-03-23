@@ -35,6 +35,12 @@ extensions = [
         language="c",
         include_dirs=["merge_tokenizers/aligners/dtw_c"],
     ),
+    Extension(
+        name="merge_tokenizers.aligners.greedy_coverage_c.greedy_coverage",
+        sources=["merge_tokenizers/aligners/greedy_coverage_c/greedy_coverage.c"],
+        language="c",
+        include_dirs=["merge_tokenizers/aligners/greedy_coverage_c"],
+    ),
 ]
 
 

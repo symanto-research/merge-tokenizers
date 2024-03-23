@@ -15,6 +15,7 @@ class TokenizedPair(BaseModel):
     word_ids_b: List[int] = []
     preprocessed_tokens_a: List[str] = []
     preprocessed_tokens_b: List[str] = []
+    text: str = ""
     features_a: np.ndarray = None
     features_b: np.ndarray = None
 
@@ -42,6 +43,7 @@ class TokenizedSet(BaseModel):
     tokens: List[List[str]]
     word_ids: List[List[int]] = []
     features: List[np.ndarray] = []
+    text: str = ""
 
     class Config:
         arbitrary_types_allowed = True

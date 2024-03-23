@@ -4,8 +4,10 @@ from transformers import AutoTokenizer
 from merge_tokenizers import (
     DTWAligner,
     FastDTWAligner,
-    GreedyAligner,
+    GreedyCoverageAligner,
+    GreedyDistanceAligner,
     PythonDTWAligner,
+    PythonGreedyCoverageAligner,
     TamuheyAligner,
     WordIdsAligner,
 )
@@ -91,7 +93,9 @@ assert (
 # Let's test all the aligners
 dtw_aligner = DTWAligner(distance_name="levenshtein")
 dtw_py_aligner = PythonDTWAligner(distance_name="levenshtein")
-greedy_aligner = GreedyAligner(distance_name="levenshtein")
+greedy_distance_aligner = GreedyDistanceAligner(distance_name="levenshtein")
+py_greedy_coverage_aligner = PythonGreedyCoverageAligner()
+greedy_coverage_aligner = GreedyCoverageAligner()
 fastdtw_aligner = FastDTWAligner(distance_name="euclidean")
 tamuhey_aligner = TamuheyAligner()
 word_ids_aligner = WordIdsAligner()
@@ -100,8 +104,14 @@ aligned_dtw = dtw_aligner.align(TokenizedSet(tokens=[tokens_1, tokens_2]))[0]
 aligned_py_dtw = dtw_py_aligner.align(
     TokenizedSet(tokens=[tokens_1, tokens_2])
 )[0]
-aligned_greedy = greedy_aligner.align(
+aligned_greedy_distance = greedy_distance_aligner.align(
     TokenizedSet(tokens=[tokens_1, tokens_2])
+)[0]
+aligned_py_greedy_coverage = py_greedy_coverage_aligner.align(
+    TokenizedSet(tokens=[tokens_1, tokens_2], text=text)
+)[0]
+aligned_greedy_coverage = greedy_coverage_aligner.align(
+    TokenizedSet(tokens=[tokens_1, tokens_2], text=text)
 )[0]
 aligned_fastdtw = fastdtw_aligner.align(
     TokenizedSet(tokens=[tokens_1, tokens_2])
@@ -115,7 +125,9 @@ aligned_word_ids = word_ids_aligner.align(
 
 print("C-DTW:", list(aligned_dtw.__tokens__()))
 print("PY-DTW:", list(aligned_py_dtw.__tokens__()))
-print("Greedy:", list(aligned_greedy.__tokens__()))
+print("Greedy-distance:", list(aligned_greedy_distance.__tokens__()))
+print("PY-Greedy-coverage:", list(aligned_py_greedy_coverage.__tokens__()))
+print("C-Greedy-coverage:", list(aligned_greedy_coverage.__tokens__()))
 print("FastDTW:", list(aligned_fastdtw.__tokens__()))
 print("Tamuhey:", list(aligned_tamuhey.__tokens__()))
 print("WordIds:", list(aligned_word_ids.__tokens__()))

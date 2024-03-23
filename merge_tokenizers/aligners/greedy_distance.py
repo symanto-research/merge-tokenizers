@@ -3,7 +3,7 @@ from ..utils.distances import get_distance_fn
 from .base import Aligner
 
 
-class GreedyAligner(Aligner):
+class GreedyDistanceAligner(Aligner):
     def __init__(self, distance_name: str, radius: int = 30, **kwargs):
         super().__init__(**kwargs)
         self.distance_fn = get_distance_fn(distance_name)
@@ -16,7 +16,7 @@ class GreedyAligner(Aligner):
     ) -> Alignment:
         """
         Aligns the tokens from two different tokenizers, using
-        a greedy matching algorithm.
+        a greedy matching algorithm based on token distances.
 
         Matches each token with the token in a surrounding window
         according to the following eq if `word_ids` are passed:
