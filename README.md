@@ -23,6 +23,9 @@ You may obtain a copy of the License at
     <a href="CODE_OF_CONDUCT.md">
         <img alt="Contributor Covenant" src="https://img.shields.io/badge/Contributor%20Covenant-v2.0-green">
     </a>
+    <a href="https://pypi.org/project/merge-tokenizers/">
+        <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/merge-tokenizers">
+    </a>
     
 
 </p>
