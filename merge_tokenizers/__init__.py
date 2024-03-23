@@ -1,8 +1,11 @@
 from .aligners import (
+    Aligner,
     DTWAligner,
     FastDTWAligner,
-    GreedyAligner,
+    GreedyCoverageAligner,
+    GreedyDistanceAligner,
     PythonDTWAligner,
+    PythonGreedyCoverageAligner,
     TamuheyAligner,
     WordIdsAligner,
 )
@@ -12,7 +15,9 @@ __all__ = [
     "Aligner",
     "DTWAligner",
     "WordIdsAligner",
-    "GreedyAligner",
+    "GreedyDistanceAligner",
+    "PythonGreedyCoverageAligner",
+    "GreedyCoverageAligner",
     "PythonDTWAligner",
     "TamuheyAligner",
     "FastDTWAligner",

@@ -34,7 +34,6 @@ class DTWAligner(Aligner):
         self.c_dtw = self.c_lib.dtw_alignment
         self.c_dtw.restype = AlignmentResult
         self.c_dtw.argtypes = [c_int, c_int, POINTER(c_int), c_int]
-        return self.c_dtw
 
     def _align_pair(
         self,

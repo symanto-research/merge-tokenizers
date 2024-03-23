@@ -59,7 +59,7 @@ $ pip install -e .
 ```
 
 # 🎨 Current algorithms
-Actually, there are 5 algorithms implemented in `merge-tokenizers`:
+Actually, there are 6 algorithms implemented in `merge-tokenizers`:
 
 **Dynamic Time Warping** (DTW): a dynamic programming algorithm to compute the optimal ($\mathcal{O}(N^2)$) alignment between two signals that may vary in speed. DTW is applied to two texts, considering text distances between the tokens of each text. `merge-tokenizers` provides a C and a Python (numba jit) implementation of DTW.
 
@@ -69,14 +69,16 @@ Actually, there are 5 algorithms implemented in `merge-tokenizers`:
 
 **Word ids**: aligns two tokenized texts using the `word_ids` provided by HuggingFace tokenizers. This algorithm do not use token distances, and instead tries to match all the tokens of the same word from both texts in order, using a modified version of the [posting list intersection algorithm](https://nlp.stanford.edu/IR-book/html/htmledition/processing-boolean-queries-1.html).
 
-**Greedy**: matches each token in a text with the tokens in a surrounding window of another text, according to the following eq if `word_ids` are passed:
-$$\textrm{match}(t_i) = \underset{{i-k\leq j\leq i+k}}{\textrm{min}}\ \textrm{dist}(t_i, t_j) * s_{ij}$$
-$$s_{ij} = 1\ \textrm{if}\ \textrm{word-id}(t_i)=\textrm{word-id}(t_j),\ \infty\ otherwise$$
+**Greedy-distance**: matches each token in a text $x$ with the tokens in a surrounding window of another text $y$, according to the following equation if `word_ids` are passed:
+$$\textrm{match}(x_i) = \underset{{i-k\leq j\leq i+k}}{\textrm{min}}\ \textrm{dist}(x_i, y_j) * s_{ij}$$
+$$s_{ij} = 1\ \textrm{if}\ \textrm{word-id}(x_i)=\textrm{word-id}(y_j),\ \infty\ otherwise$$
 
-or the following eq if `word_ids` are not passed:
+or the following equation if `word_ids` are not passed:
 
-$$\textrm{match}(t_i) = \underset{i-k\leq j\leq i+k}{\textrm{min}}\ \textrm{dist}(t_i, t_j)$$
+$$\textrm{match}(x_i) = \underset{i-k\leq j\leq i+k}{\textrm{min}}\ \textrm{dist}(x_i, y_j)$$
 It is recommended to use a large radius `k` (e.g., 30) to avoid introducing matching errors at the end of the sequence if the "speed" of the tokenizations varies a lot.
+
+**Greedy-coverage**: aligns the tokens from two different tokenizers, using a greedy matching algorithm based on text coverage. This algorithm remove whitespaces from the text, and finds the positions (start, end) that each token covers in the text without whitespaces. Once we have the lists of (start, end) for each token and for each tokenization, we merge the tokens of the second tokenization that are spanned by the tokens of the first tokenization. For instance, having computed $spans_a$ = [(0, 5), (5, 13), (13, 23)] and $spans_b$ = [(0, 4), (5, 8), (8, 11), (11, 14), (15, 19), (19, 21), (21, 23)], the alignment will be [(0, [0]), (1, [1, 2, 3]), (2, [4, 5, 6])]. `merge-tokenizers` provides a C and a Python implementation of this algorithm.
 
 # 🔎 What algorithm should I use?
 
@@ -95,7 +97,8 @@ The following table categorizes each approach according to these factors.
 | **Py-DTW**   | low    | yes     | high    | none                           | none                                                                                                  |
 | **Fast-DTW** | medium | no      | high    | none                           | none                                                                                                  |
 | **Tamuhey**  | high   | no      | high    | none                           | Missing alignments when the tokenizations are very dissimilar (both in tokens and in length) |
-| **Greedy**   | medium | no      | medium  | none                           | none                                                                                                  |
+| **Greedy-distance**   | medium | no      | medium  | none                           | none                                                                                                  |
+| **Greedy-coverage**   | high | no      | high  | none                           | none                                                                                                  |
 | **Word-ids** | high   | no      | medium  | Tokenizer must return word_ids | none                                                                                                  |
 
 To delve more on the speed factor, the following plot depicts the speed (seconds in logarithmic scale) that each aligner takes to align one pair of tokenizations, with different token lengths (6 examples averaged on 100 runs).
@@ -226,23 +229,41 @@ The following code illustrates how to use all the current aligners.
 # Let's test all the aligners
 dtw_aligner = DTWAligner(distance_name="levenshtein")
 dtw_py_aligner = PythonDTWAligner(distance_name="levenshtein")
-greedy_aligner = GreedyAligner(distance_name="levenshtein")
+greedy_distance_aligner = GreedyDistanceAligner(distance_name="levenshtein")
+py_greedy_coverage_aligner = PythonGreedyCoverageAligner()
+greedy_coverage_aligner = GreedyCoverageAligner()
 fastdtw_aligner = FastDTWAligner(distance_name="euclidean")
 tamuhey_aligner = TamuheyAligner()
 word_ids_aligner = WordIdsAligner()
 
 aligned_dtw = dtw_aligner.align(TokenizedSet(tokens=[tokens_1, tokens_2]))[0]
-aligned_py_dtw = dtw_py_aligner.align(TokenizedSet(tokens=[tokens_1, tokens_2]))[0]
-aligned_greedy = greedy_aligner.align(TokenizedSet(tokens=[tokens_1, tokens_2]))[0]
-aligned_fastdtw = fastdtw_aligner.align(TokenizedSet(tokens=[tokens_1, tokens_2]))[0]
-aligned_tamuhey = tamuhey_aligner.align(TokenizedSet(tokens=[tokens_1, tokens_2]))[0]
+aligned_py_dtw = dtw_py_aligner.align(
+    TokenizedSet(tokens=[tokens_1, tokens_2])
+)[0]
+aligned_greedy_distance = greedy_distance_aligner.align(
+    TokenizedSet(tokens=[tokens_1, tokens_2])
+)[0]
+aligned_py_greedy_coverage = py_greedy_coverage_aligner.align(
+    TokenizedSet(tokens=[tokens_1, tokens_2], text=text)
+)[0]
+aligned_greedy_coverage = greedy_coverage_aligner.align(
+    TokenizedSet(tokens=[tokens_1, tokens_2], text=text)
+)[0]
+aligned_fastdtw = fastdtw_aligner.align(
+    TokenizedSet(tokens=[tokens_1, tokens_2])
+)[0]
+aligned_tamuhey = tamuhey_aligner.align(
+    TokenizedSet(tokens=[tokens_1, tokens_2])
+)[0]
 aligned_word_ids = word_ids_aligner.align(
     TokenizedSet(tokens=[tokens_1, tokens_2], word_ids=[word_ids_1, word_ids_2])
 )[0]
 
 print("C-DTW:", list(aligned_dtw.__tokens__()))
 print("PY-DTW:", list(aligned_py_dtw.__tokens__()))
-print("Greedy:", list(aligned_greedy.__tokens__()))
+print("Greedy-distance:", list(aligned_greedy_distance.__tokens__()))
+print("PY-Greedy-coverage:", list(aligned_py_greedy_coverage.__tokens__()))
+print("C-Greedy-coverage:", list(aligned_greedy_coverage.__tokens__()))
 print("FastDTW:", list(aligned_fastdtw.__tokens__()))
 print("Tamuhey:", list(aligned_tamuhey.__tokens__()))
 print("WordIds:", list(aligned_word_ids.__tokens__()))

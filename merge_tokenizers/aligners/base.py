@@ -78,6 +78,7 @@ class Aligner(ABC):
                     tokens_b=tokens_b,
                     word_ids_a=word_ids_a,
                     word_ids_b=word_ids_b,
+                    text=tokenized_set.text,
                 )
             )
             for tokens_b, word_ids_b in zip(
@@ -184,6 +185,7 @@ class Aligner(ABC):
                         word_ids_b=word_ids_b,
                         features_a=features_a,
                         features_b=features_b,
+                        text=tokenized_set.text,
                     ),
                     aggregate_fn,
                     alignment=(

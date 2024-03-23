@@ -1,5 +1,6 @@
 // https://www.digitalocean.com/community/tutorials/calling-c-functions-from-python
-// cc -fPIC -shared -o src/aligners/dtw_c/dtw.so src/aligners/dtw_c/dtw.c
+// cc -fPIC -shared -o merge_tokenizers/aligners/dtw_c/dtw.so merge_tokenizers/aligners/dtw_c/dtw.c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

@@ -11,8 +11,10 @@ from merge_tokenizers import (
     Aligner,
     DTWAligner,
     FastDTWAligner,
-    GreedyAligner,
+    GreedyCoverageAligner,
+    GreedyDistanceAligner,
     PythonDTWAligner,
+    PythonGreedyCoverageAligner,
     TamuheyAligner,
     WordIdsAligner,
 )
@@ -71,6 +73,7 @@ def compute_times(
                 tokenized_set = TokenizedSet(
                     tokens=[tokens_a, tokens_b],
                     word_ids=[word_ids_a, word_ids_b],
+                    text=text,
                 )
                 for aligner in aligners:
                     times[(size_a, size_b)][aligner.__class__.__name__].append(
@@ -131,7 +134,9 @@ if __name__ == "__main__":
     aligners = [
         DTWAligner(distance_name="levenshtein"),
         PythonDTWAligner(distance_name="levenshtein"),
-        GreedyAligner(distance_name="levenshtein"),
+        GreedyDistanceAligner(distance_name="levenshtein"),
+        PythonGreedyCoverageAligner(),
+        GreedyCoverageAligner(),
         FastDTWAligner(distance_name="euclidean"),
         TamuheyAligner(),
         WordIdsAligner(),
