@@ -31,7 +31,7 @@ You may obtain a copy of the License at
 </p>
 
 <h3 align="center">
-    <p><b>Algorithm suite to align tokens from different tokenizations</b></p>
+    <p><b>Package to align tokens from different tokenizations</b></p>
 </h3>
 
 
