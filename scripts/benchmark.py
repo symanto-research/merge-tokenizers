@@ -70,11 +70,20 @@ def compute_times(
                 word_ids_a = tokenized_a.word_ids()
                 word_ids_b = tokenized_b.word_ids()
 
+                spans_a = [
+                    tokenized_a.token_to_chars(i) for i in range(len(tokens_a))
+                ]
+                spans_b = [
+                    tokenized_b.token_to_chars(i) for i in range(len(tokens_b))
+                ]
+
                 tokenized_set = TokenizedSet(
                     tokens=[tokens_a, tokens_b],
                     word_ids=[word_ids_a, word_ids_b],
+                    spans=[spans_a, spans_b],
                     text=text,
                 )
+
                 for aligner in aligners:
                     times[(size_a, size_b)][aligner.__class__.__name__].append(
                         align_time(aligner.align, tokenized_set)

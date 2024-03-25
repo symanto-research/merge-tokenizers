@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 from pydantic import BaseModel, field_validator, model_validator
@@ -13,6 +13,8 @@ class TokenizedPair(BaseModel):
     tokens_b: List[str]
     word_ids_a: List[int] = []
     word_ids_b: List[int] = []
+    spans_a: List[Tuple[int, int]] = []
+    spans_b: List[Tuple[int, int]] = []
     preprocessed_tokens_a: List[str] = []
     preprocessed_tokens_b: List[str] = []
     text: str = ""
@@ -21,13 +23,25 @@ class TokenizedPair(BaseModel):
 
     @field_validator("word_ids_a", "word_ids_b", mode="before")
     @classmethod
-    def prepare_word_ids_a(cls, word_ids):
+    def prepare_word_ids(cls, word_ids):
         if word_ids:
             if word_ids[0] is None:
                 word_ids[0] = -1
             if word_ids[-1] is None:
                 word_ids[-1] = max(word_ids[:-1]) + 1
             return word_ids
+        else:
+            return []
+
+    @field_validator("spans_a", "spans_b", mode="before")
+    @classmethod
+    def prepare_spans(cls, spans):
+        if spans:
+            if spans[0] is None:
+                spans[0] = (-1, -1)
+            if spans[-1] is None:
+                spans[-1] = (-1, -1)
+            return spans
         else:
             return []
 
@@ -42,6 +56,7 @@ class TokenizedSet(BaseModel):
 
     tokens: List[List[str]]
     word_ids: List[List[int]] = []
+    spans: List[List[Tuple[int, int]]] = []
     features: List[np.ndarray] = []
     text: str = ""
 
@@ -58,7 +73,7 @@ class TokenizedSet(BaseModel):
 
     @field_validator("word_ids", mode="before")
     @classmethod
-    def prepare_word_ids_a(cls, _word_ids):
+    def prepare_word_ids(cls, _word_ids):
         new_word_ids = []
         if _word_ids:
             for word_ids in _word_ids:
@@ -68,6 +83,21 @@ class TokenizedSet(BaseModel):
                     word_ids[-1] = max(word_ids[:-1]) + 1
                 new_word_ids.append(word_ids)
             return new_word_ids
+        else:
+            return []
+
+    @field_validator("spans", mode="before")
+    @classmethod
+    def prepare_spans(cls, _spans):
+        new_spans = []
+        if _spans:
+            for spans in _spans:
+                if spans[0] is None:
+                    spans[0] = (-1, -1)
+                if spans[-1] is None:
+                    spans[-1] = (-1, -1)
+                new_spans.append(spans)
+            return new_spans
         else:
             return []
 

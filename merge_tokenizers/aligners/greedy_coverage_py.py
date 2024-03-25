@@ -117,11 +117,22 @@ class PythonGreedyCoverageAligner(Aligner):
 
         will result in [(0, [0]), (1, [1, 2, 3]), (2, [4, 5, 6])]
         """
-        text = tokenized_pair.text.lower().replace(" ", "")
 
-        # Get spans and align
-        spans_a = get_spans(tokenized_pair.preprocessed_tokens_a, text)
-        spans_b = get_spans(tokenized_pair.preprocessed_tokens_b, text)
+        # Get spans
+        # If the spans covering the text are not passed, compute them.
+        if not tokenized_pair.spans_a and not tokenized_pair.spans_b:
+            assert (
+                tokenized_pair.text
+            ), "`text` must be passed as argument when not passing `span_a` and `span_b`"
+            text = tokenized_pair.text.lower().replace(" ", "")
+            spans_a = get_spans(tokenized_pair.preprocessed_tokens_a, text)
+            spans_b = get_spans(tokenized_pair.preprocessed_tokens_b, text)
+        # Otherwise, use them.
+        else:
+            spans_a = tokenized_pair.spans_a
+            spans_b = tokenized_pair.spans_b
+
+        # Align spans
         alignments = merge_spans(spans_a, spans_b)
 
         # Merge alignments
