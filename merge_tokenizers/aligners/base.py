@@ -44,6 +44,7 @@ class Aligner(ABC):
         tokenized_pair.preprocessed_tokens_b = preprocess_tokens(
             tokenized_pair.tokens_b
         )
+
         # If both tokenizations are the same, return 1-1 alignment
         if (
             tokenized_pair.preprocessed_tokens_a
@@ -69,8 +70,16 @@ class Aligner(ABC):
             if tokenized_set.word_ids
             else [[] for _ in range(len(tokenized_set.tokens))]
         )
+        spans = (
+            tokenized_set.spans
+            if tokenized_set.spans
+            else [[] for _ in range(len(tokenized_set.tokens))]
+        )
+
         tokens_a = tokenized_set.tokens[0]
         word_ids_a = word_ids[0]
+        spans_a = spans[0]
+
         return [
             self.align_pair(
                 TokenizedPair(
@@ -78,11 +87,13 @@ class Aligner(ABC):
                     tokens_b=tokens_b,
                     word_ids_a=word_ids_a,
                     word_ids_b=word_ids_b,
+                    spans_a=spans_a,
+                    spans_b=spans_b,
                     text=tokenized_set.text,
                 )
             )
-            for tokens_b, word_ids_b in zip(
-                tokenized_set.tokens[1:], word_ids[1:]
+            for tokens_b, word_ids_b, spans_b in zip(
+                tokenized_set.tokens[1:], word_ids[1:], spans[1:]
             )
         ]
 
@@ -164,16 +175,24 @@ class Aligner(ABC):
             else [[] for _ in range(len(tokenized_set.tokens))]
         )
 
+        spans = (
+            tokenized_set.spans
+            if tokenized_set.spans
+            else [[] for _ in range(len(tokenized_set.tokens))]
+        )
+
         tokens_a = tokenized_set.tokens[0]
         word_ids_a = word_ids[0]
+        spans_a = spans[0]
         features_a = tokenized_set.features[0]
         merged_features = []
 
-        for idx, (tokens_b, features_b, word_ids_b) in enumerate(
+        for idx, (tokens_b, features_b, word_ids_b, spans_b) in enumerate(
             zip(
                 tokenized_set.tokens[1:],
                 tokenized_set.features[1:],
                 word_ids[1:],
+                spans[1:],
             )
         ):
             merged_features.append(
@@ -183,6 +202,8 @@ class Aligner(ABC):
                         tokens_b=tokens_b,
                         word_ids_a=word_ids_a,
                         word_ids_b=word_ids_b,
+                        spans_a=spans_a,
+                        spans_b=spans_b,
                         features_a=features_a,
                         features_b=features_b,
                         text=tokenized_set.text,

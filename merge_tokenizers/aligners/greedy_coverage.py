@@ -73,27 +73,33 @@ class GreedyCoverageAligner(Aligner):
 
         will result in [(0, [0]), (1, [1, 2, 3]), (2, [4, 5, 6])]
         """
-        text = tokenized_pair.text.lower().replace(" ", "").encode("utf-8")
 
         # Get the span covered by each token
         spans = {}
-        for tokenization, preprocessed_tokens in {
-            "a": tokenized_pair.preprocessed_tokens_a,
-            "b": tokenized_pair.preprocessed_tokens_b,
-        }.items():
-            ptr = (ctypes.c_char_p * len(preprocessed_tokens))(
-                *[token.encode("utf-8") for token in preprocessed_tokens]
-            )
-            c_spans = self.c_get_spans(
-                ptr,
-                text,
-                len(preprocessed_tokens),
-            )
-            spans[tokenization] = [
-                (c_spans[i].start, c_spans[i].end)
-                for i in range(len(preprocessed_tokens))
-            ]
-            self.c_free_spans(c_spans)
+        # If the spans covering the text are not passed, compute them.
+        if not tokenized_pair.spans_a and not tokenized_pair.spans_b:
+            text = tokenized_pair.text.lower().replace(" ", "").encode("utf-8")
+            for tokenization, preprocessed_tokens in {
+                "a": tokenized_pair.preprocessed_tokens_a,
+                "b": tokenized_pair.preprocessed_tokens_b,
+            }.items():
+                ptr = (ctypes.c_char_p * len(preprocessed_tokens))(
+                    *[token.encode("utf-8") for token in preprocessed_tokens]
+                )
+                c_spans = self.c_get_spans(
+                    ptr,
+                    text,
+                    len(preprocessed_tokens),
+                )
+                spans[tokenization] = [
+                    (c_spans[i].start, c_spans[i].end)
+                    for i in range(len(preprocessed_tokens))
+                ]
+                self.c_free_spans(c_spans)
+        # Otherwise, use them
+        else:
+            spans["a"] = tokenized_pair.spans_a
+            spans["b"] = tokenized_pair.spans_b
 
         # Merge the spans
         c_spans_a = (Tuple * len(spans["a"]))(*spans["a"])  # type: ignore
